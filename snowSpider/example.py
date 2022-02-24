@@ -329,17 +329,21 @@ def current_date():
 
 
 def translate_keys(keys):
+    list_keys = []
     last_mon, yesterday = current_date()
     for k, v in keys.items():
         if k in ["key1", "key8"]:
             keys[k] = "%s %s" % (last_mon, v)
         elif k in ["key2", "key3", "key6", "key7", "key9"]:
             keys[k] = "%s %s" % (yesterday, v)
-    return keys
+        list_keys.append(keys.get(k))
+    return keys, list_keys
 
 
 def build_result(nums, keys):
-    real_keys = translate_keys(keys)
+    real_keys, list_keys = translate_keys(keys)
+    # print json.dumps(list_keys).decode("unicode-escape").encode("utf-8")
+    # exit()
     ans = []
     idx = 0
     for title in titles:
@@ -374,6 +378,8 @@ if __name__ == '__main__':
     }
     r = get(zhujianwei, headers)
     real_nums = parse_num(r, num_xpath)
+    # print json.dumps(real_nums)
+    # exit()
     # print json.dumps(real_nums)
 
     # last_mon, yesterday = current_date()
