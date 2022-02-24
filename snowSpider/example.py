@@ -1,6 +1,8 @@
-# coding=utf-8
+
+#coding=utf-8
 import datetime
 import json
+import sys
 import urllib2
 
 import lxml
@@ -302,6 +304,15 @@ xpath_zhujainwei = {
 }
 
 
+def today():
+    now = datetime.datetime.now()
+    year = now.year
+    mon = now.month
+    day = now.today().day
+
+    today_str = "%d%02d%02d" % (year, mon, day)
+    return today_str
+
 def current_date():
     now = datetime.datetime.now()
     year = now.year
@@ -339,12 +350,21 @@ def build_result(nums, keys):
             for row in rows:
                 val[row] = nums[idx]
                 idx = idx + 1
-            item[key] = val
+            k_1 = key.decode('utf-8').encode(sys.getfilesystemencoding())
+            item[k_1] = val
         ans.append(item)
     return ans
 
 
 if __name__ == '__main__':
+    # for title in titles:
+    #     for k, vs in title.items():
+    #         for v in vs:
+    #             print v.decode('utf-8').encode(sys.getfilesystemencoding())
+    #             exit()
+
+    # print today()
+    # exit()
     # ans = crawl_yesterday(yesterday, xpath_dict)
     # print json.dumps(ans)
     # get_all_url(yesterday)
@@ -360,4 +380,9 @@ if __name__ == '__main__':
     # print last_mon, yesterday
 
     ans = build_result(real_nums, keys)
-    print json.dumps(ans)
+    # print ans
+    # print json.dumps(ans).decode("unicode-escape")
+
+    file_path = "%s.json" % (today())
+    with open(file_path, 'w') as f:
+        f.write(json.dumps(ans).decode("unicode-escape").encode("utf-8"))
