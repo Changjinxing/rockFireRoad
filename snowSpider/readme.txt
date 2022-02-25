@@ -6,11 +6,11 @@ todo list
     3. 网签数量 id date type[day/week/month] source url status online gmt_create gmt_update creator operator
 2. 数据生成图片 done
 3. 发送邮件 done
-4. 趋势曲线网页
+4. 趋势曲线网页 done
 5. 发送微信群消息
-6. 趋势曲线网页下载生成图片 发送邮件
+6. 趋势曲线网页下载生成图片 发送邮件 done
 7. 钉钉机器人 or 公众号推送 用a公众号推送给所有人
-8. 图片html格式优化
+8. 图片html格式优化 done using 冬奥色卡 https://china.huanqiu.com/article/46glrMfOyAb
 
 
 
