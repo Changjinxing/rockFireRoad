@@ -8,26 +8,24 @@ from PIL import Image
 import os
 
 
-url = "file:///Users/jinxing.zhang/Documents/git/rockFireRoad/snowSpider/a.html"
-print url
-save_fn = "save.png"
+def download_and_save(url, save_fn):
 
-option = webdriver.ChromeOptions()
-option.add_argument('--headless')
-option.add_argument('--disable-gpu')
-option.add_argument("--window-size=1280,1024")
-option.add_argument("--hide-scrollbars")
+    option = webdriver.ChromeOptions()
+    option.add_argument('--headless')
+    option.add_argument('--disable-gpu')
+    option.add_argument("--window-size=1280,1024")
+    option.add_argument("--hide-scrollbars")
 
-driver = webdriver.Chrome(chrome_options=option)
+    driver = webdriver.Chrome(chrome_options=option)
 
-driver.get(url)
-print(driver.title)
+    driver.get(url)
+    print(driver.title)
 
-scroll_width = driver.execute_script('return document.body.parentNode.scrollWidth')
-scroll_height = driver.execute_script('return document.body.parentNode.scrollHeight')
-driver.set_window_size(scroll_width, scroll_height)
-driver.save_screenshot(save_fn)
-driver.quit()
+    scroll_width = driver.execute_script('return document.body.parentNode.scrollWidth')
+    scroll_height = driver.execute_script('return document.body.parentNode.scrollHeight')
+    driver.set_window_size(scroll_width, scroll_height)
+    driver.save_screenshot(save_fn)
+    driver.quit()
 
 
 def crop_img(img):
@@ -45,4 +43,8 @@ def crop_img(img):
 
 
 if __name__ == '__main__':
+    url = "file:///Users/jinxing.zhang/Documents/git/rockFireRoad/snowSpider/a.html"
+    print url
+    save_fn = "save.png"
+    download_and_save(url, save_fn)
     crop_img(save_fn)
