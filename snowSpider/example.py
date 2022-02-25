@@ -13,6 +13,11 @@ from lxml import etree
 from lxml import html
 
 
+def save_file(save_fp, data):
+    with open(save_fp, 'w') as f:
+        f.write(data)
+
+
 def is_number(num):
     try:
         float(num)

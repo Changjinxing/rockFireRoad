@@ -20,6 +20,8 @@ from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+import html2png
+
 zhujianwei = "http://bjjs.zjw.beijing.gov.cn/eportal/ui?pageId=307749"
 num_xpath = '//td[@align="center"]/text() | //td[@align="middle"]/text()'
 keys = {
@@ -383,6 +385,38 @@ def send_png(png_path, receiver):
     send_mail(subject, png_path, receiver)
 
 
+def save_file(save_fp, data):
+    with open(save_fp, 'w') as f:
+        f.write(data)
+
+
+def get_wangqian_qushi_and_send():
+    url = "http://www.beijingfangshi.com/wx_w1.html"
+    save_fn = "./screenshot/%s_fangshi.png" % example.today()
+    corp_save_fn = "./screenshot_final/%s_fangshi.png" % example.today()
+
+    headers = {
+        "Connection": "keep-alive",
+        "Content-Type": "application/xhtml+html",
+        "Host": "www.beijingfangshi.com",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "user-agent": "PostmanRuntime/7.29.0",
+        # "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36"
+    }
+    r = download(url, headers)
+    # print r.text.encode('utf8','ignore')
+    html_save_fp = "./static/%s_fangshi.html" % today_str()
+    save_file(html_save_fp, r.text.encode('utf8','ignore'))
+
+    local_html_url = "file:///Users/jinxing.zhang/Documents/git/rockFireRoad/snowSpider/static/%s_fangshi.html" % example.today()
+
+    print url, local_html_url, save_fn, html_save_fp
+    html2png.download_and_save(local_html_url, save_fn)
+    html2png.crop_img(save_fn, corp_save_fn, True, 0, 0, 2680, 1400)
+
+
 if __name__ == '__main__':
     nums, keys = crawl_and_save()
     html_path = format_and_save_html(nums, keys)
@@ -391,3 +425,6 @@ if __name__ == '__main__':
     # receiver = 'jinxingbay@163.com'  # 收件人
     receiver = 'jinxing.zhang@hulu.com'  # 收件人
     send_png(png_file_path, receiver)
+
+    # 房市儿
+    get_wangqian_qushi_and_send()
