@@ -393,12 +393,12 @@ def send_mail(multi, subject, img_paths, receiver):
         # print img_path, img_name
         # exit()
         # 指定图片为当前目录
-        fp = open(img_path, 'rb')
-        msgImage = MIMEImage(fp.read())
-        fp.close()
-        # 定义图片 ID，在 HTML 文本中引用
-        msgImage.add_header('Content-ID', '<image1>')
-        msg.attach(msgImage)
+        # fp = open(img_path, 'rb')
+        # msgImage = MIMEImage(fp.read())
+        # fp.close()
+        # # 定义图片 ID，在 HTML 文本中引用
+        # msgImage.add_header('Content-ID', '<image1>')
+        # msg.attach(msgImage)
 
         ctype = 'application/octet-stream'
         maintype, subtype = ctype.split('/', 1)
