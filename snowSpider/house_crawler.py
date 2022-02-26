@@ -2,25 +2,22 @@
 
 import datetime
 import json
-import sys
-
-import lxml
-import requests
-from lxml import html
-import time
-import os
-
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from PIL import Image
-import os
 import smtplib
+import sys
 import time
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+
+import lxml
+import requests
+from PIL import Image
+from lxml import html
+from selenium import webdriver
 
 import html2png
+
+local_path_prefix = "/Users/jinxing.zhang/Documents/git"
+local_path_prefix = "/root/code"
 
 zhujianwei = "http://bjjs.zjw.beijing.gov.cn/eportal/ui?pageId=307749"
 num_xpath = '//td[@align="center"]/text() | //td[@align="middle"]/text()'
@@ -298,7 +295,7 @@ def format_and_save_html(nums, keys):
     file_path = "static/%s.html" % (today_str())
     with open(file_path, 'w') as f:
         f.write(format_html_str.format(nums, keys))
-    return "file:///Users/jinxing.zhang/Documents/git/rockFireRoad/snowSpider/static/%s.html" % (today_str())
+    return "file://%s/rockFireRoad/snowSpider/static/%s.html" % (local_path_prefix, today_str())
 
 
 def crop_img(img):
@@ -410,7 +407,7 @@ def get_wangqian_qushi_and_send():
     html_save_fp = "./static/%s_fangshi.html" % today_str()
     save_file(html_save_fp, r.text.encode('utf8','ignore'))
 
-    local_html_url = "file:///Users/jinxing.zhang/Documents/git/rockFireRoad/snowSpider/static/%s_fangshi.html" % example.today()
+    local_html_url = "file://%s/rockFireRoad/snowSpider/static/%s_fangshi.html" % (local_path_prefix, example.today())
 
     print url, local_html_url, save_fn, html_save_fp
     html2png.download_and_save(local_html_url, save_fn)
