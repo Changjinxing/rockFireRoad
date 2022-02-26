@@ -279,7 +279,7 @@ def crawl_and_save():
     ans, real_keys = build_result(real_nums, keys)
     # save data local json file
     # todo: mysql saving
-    file_path = "%s.json" % (today_str())
+    file_path = "./data/%s.json" % (today_str())
     with open(file_path, 'w') as f:
         f.write(json.dumps(ans).decode("unicode-escape").encode("utf-8"))
     return real_nums, real_keys
