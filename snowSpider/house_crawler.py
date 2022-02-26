@@ -17,7 +17,7 @@ from selenium import webdriver
 import html2png
 
 local_path_prefix = "/Users/jinxing.zhang/Documents/git"
-local_path_prefix = "/root/code"
+# local_path_prefix = "/root/code"
 
 zhujianwei = "http://bjjs.zjw.beijing.gov.cn/eportal/ui?pageId=307749"
 num_xpath = '//td[@align="center"]/text() | //td[@align="middle"]/text()'
@@ -382,6 +382,49 @@ def send_png(png_path, receiver):
     send_mail(subject, png_path, receiver)
 
 
+def send_mail(multi, subject, img_paths, receiver):
+    msg = MIMEMultipart()
+    msg['Subject'] = subject  # 标题
+    msg['From'] = sender  # 邮件中显示的发件人别称
+    msg['To'] = receiver  # ...收件人...
+
+    for img_path in img_paths:
+        img_name = img_path.split("/")[-1]
+        # print img_path, img_name
+        # exit()
+        # 指定图片为当前目录
+        fp = open(img_path, 'rb')
+        msgImage = MIMEImage(fp.read())
+        fp.close()
+        # 定义图片 ID，在 HTML 文本中引用
+        msgImage.add_header('Content-ID', '<image1>')
+        msg.attach(msgImage)
+
+        ctype = 'application/octet-stream'
+        maintype, subtype = ctype.split('/', 1)
+        # 附件-图片
+        image = MIMEImage(open(img_path, 'rb').read(), _subtype=subtype)
+        image.add_header('Content-Disposition', 'attachment', filename=img_name)
+        msg.attach(image)
+    print "beg..."
+    # 发送
+    smtp = smtplib.SMTP()
+    smtp.connect(email_host, 25)
+    print "connect done"
+    smtp.login(sender, password)
+    print "login done, sending..."
+    smtp.sendmail(sender, receiver, msg.as_string())
+    smtp.quit()
+    print('success')
+
+
+# send png
+def send_pngs(png_paths, receiver):
+    now = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+    subject = "房屋交易 - %s" % today_str()
+    send_mail(True, subject, png_paths, receiver)
+
+
 def save_file(save_fp, data):
     with open(save_fp, 'w') as f:
         f.write(data)
@@ -389,8 +432,8 @@ def save_file(save_fp, data):
 
 def get_wangqian_qushi_and_send():
     url = "http://www.beijingfangshi.com/wx_w1.html"
-    save_fn = "./screenshot/%s_fangshi.png" % example.today()
-    corp_save_fn = "./screenshot_final/%s_fangshi.png" % example.today()
+    save_fn = "./screenshot/%s_fangshi.png" % today_str()
+    corp_save_fn = "./screenshot_final/%s_fangshi.png" % today_str()
 
     headers = {
         "Connection": "keep-alive",
@@ -407,11 +450,13 @@ def get_wangqian_qushi_and_send():
     html_save_fp = "./static/%s_fangshi.html" % today_str()
     save_file(html_save_fp, r.text.encode('utf8','ignore'))
 
-    local_html_url = "file://%s/rockFireRoad/snowSpider/static/%s_fangshi.html" % (local_path_prefix, example.today())
+    local_html_url = "file://%s/rockFireRoad/snowSpider/static/%s_fangshi.html" % (local_path_prefix, today_str())
 
     print url, local_html_url, save_fn, html_save_fp
     html2png.download_and_save(local_html_url, save_fn)
     html2png.crop_img(save_fn, corp_save_fn, True, 0, 0, 2680, 1400)
+
+    return corp_save_fn
 
 
 if __name__ == '__main__':
@@ -419,9 +464,17 @@ if __name__ == '__main__':
     html_path = format_and_save_html(nums, keys)
     png_file_path = save_and_crop_png(html_path)
 
-    # receiver = 'jinxingbay@163.com'  # 收件人
-    receiver = 'jinxing.zhang@hulu.com'  # 收件人
-    send_png(png_file_path, receiver)
+    receiver = 'jinxingbay@163.com'  # 收件人
+    # receiver = 'jinxing.zhang@hulu.com'  # 收件人
+    # send_png(png_file_path, receiver)
 
     # 房市儿
-    get_wangqian_qushi_and_send()
+    fangshi_png = get_wangqian_qushi_and_send()
+    # send_png(fangshi_png, receiver)
+
+    png_paths = [
+        png_file_path,
+        fangshi_png
+    ]
+
+    send_pngs(png_paths, receiver)
