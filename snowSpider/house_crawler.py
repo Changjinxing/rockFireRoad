@@ -328,7 +328,8 @@ def save_and_crop_png(url):
     option.add_argument("--window-size=1280,1024")
     option.add_argument("--hide-scrollbars")
 
-    driver = webdriver.Chrome(chrome_options=option)
+    driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver', chrome_options=option)
+    # driver = webdriver.Chrome(chrome_options=option)
 
     driver.get(url)
     print(driver.title)
