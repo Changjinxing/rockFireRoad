@@ -17,7 +17,7 @@ from selenium import webdriver
 import html2png
 
 local_path_prefix = "/Users/jinxing.zhang/Documents/git"
-# local_path_prefix = "/root/code"
+local_path_prefix = "/root/code"
 
 zhujianwei = "http://bjjs.zjw.beijing.gov.cn/eportal/ui?pageId=307749"
 num_xpath = '//td[@align="center"]/text() | //td[@align="middle"]/text()'
