@@ -238,12 +238,16 @@ def current_date():
 def translate_keys(keys):
     list_keys = []
     last_mon, yesterday = current_date()
-    for k, v in keys.items():
+    for i in range(0, 10):
+        k = "key%d" % i
+        v = keys.get(k)
         if k in ["key1", "key8"]:
             keys[k] = "%s %s" % (last_mon, v)
         elif k in ["key2", "key3", "key6", "key7", "key9"]:
             keys[k] = "%s %s" % (yesterday, v)
         list_keys.append(keys.get(k))
+    # print json.dumps(list_keys)
+    # exit()
     return keys, list_keys
 
 
