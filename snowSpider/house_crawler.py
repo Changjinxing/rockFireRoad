@@ -5,6 +5,8 @@ import json
 import smtplib
 import sys
 import time
+from email import encoders
+from email.mime.base import MIMEBase
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 
