@@ -17,7 +17,7 @@ from selenium import webdriver
 import html2png
 
 local_path_prefix = "/Users/jinxing.zhang/Documents/git"
-local_path_prefix = "/root/code"
+# local_path_prefix = "/root/code"
 
 zhujianwei = "http://bjjs.zjw.beijing.gov.cn/eportal/ui?pageId=307749"
 num_xpath = '//td[@align="center"]/text() | //td[@align="middle"]/text()'
@@ -299,7 +299,7 @@ def format_and_save_html(nums, keys):
     file_path = "static/%s.html" % (today_str())
     with open(file_path, 'w') as f:
         f.write(format_html_str.format(nums, keys))
-    return "file://%s/rockFireRoad/snowSpider/static/%s.html" % (local_path_prefix, today_str())
+    return "file://%s/rockFireRoad/snowSpider/static/%s.html" % (local_path_prefix, today_str()), file_path
 
 
 def crop_img(img):
@@ -461,12 +461,48 @@ def get_wangqian_qushi_and_send():
     html2png.download_and_save(local_html_url, save_fn)
     html2png.crop_img(save_fn, corp_save_fn, True, 0, 0, 2680, 1400)
 
-    return corp_save_fn
+    return corp_save_fn, html_save_fp
+
+
+def send_html(subject, html_paths, receiver):
+    msg = MIMEMultipart()
+    msg['Subject'] = subject  # 标题
+    msg['From'] = sender  # 邮件中显示的发件人别称
+    msg['To'] = receiver  # ...收件人...
+
+    ctype = 'application/octet-stream'
+    maintype, subtype = ctype.split('/', 1)
+    for html_path in html_paths:
+        name = html_path.split("/")[-1]
+        # 附件-文件
+        file = MIMEBase(maintype, subtype)
+        file.set_payload(open(html_path, 'rb').read())
+        file.add_header('Content-Disposition', 'attachment', filename=name)
+        encoders.encode_base64(file)
+        msg.attach(file)
+
+    print "beg..."
+    # 发送
+    smtp = smtplib.SMTP()
+    smtp.connect(email_host, 25)
+    print "connect done"
+    smtp.login(sender, password)
+    print "login done, sending..."
+    smtp.sendmail(sender, receiver, msg.as_string())
+    smtp.quit()
+    print('success')
+
+
+# send png
+def send_htmls(html_paths, receiver):
+    now = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+    subject = "房屋交易 - html - %s" % today_str()
+    send_html(subject, png_paths, receiver)
 
 
 if __name__ == '__main__':
     nums, keys = crawl_and_save()
-    html_path = format_and_save_html(nums, keys)
+    html_path, zjw_html = format_and_save_html(nums, keys)
     png_file_path = save_and_crop_png(html_path)
 
     receiver = 'jinxingbay@163.com'  # 收件人
@@ -474,7 +510,7 @@ if __name__ == '__main__':
     # send_png(png_file_path, receiver)
 
     # 房市儿
-    fangshi_png = get_wangqian_qushi_and_send()
+    fangshi_png, fs_html = get_wangqian_qushi_and_send()
     # send_png(fangshi_png, receiver)
 
     png_paths = [
@@ -483,3 +519,9 @@ if __name__ == '__main__':
     ]
 
     send_pngs(png_paths, receiver)
+
+    html_paths = [
+        zjw_html,
+        fs_html
+    ]
+    send_htmls(html_paths, receiver)

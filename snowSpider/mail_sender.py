@@ -2,6 +2,8 @@
 
 import smtplib
 import time
+from email import encoders
+from email.mime.base import MIMEBase
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -72,8 +74,40 @@ def send_mail(subject, img_path):
     print('success')
 
 
+def send_html(subject, html_paths):
+    msg = MIMEMultipart()
+    msg['Subject'] = subject  # 标题
+    msg['From'] = sender  # 邮件中显示的发件人别称
+    msg['To'] = receiver  # ...收件人...
+
+    ctype = 'application/octet-stream'
+    maintype, subtype = ctype.split('/', 1)
+    for html_path in html_paths:
+        name = html_path.split("/")[-1]
+        # 附件-文件
+        file = MIMEBase(maintype, subtype)
+        file.set_payload(open(html_path, 'rb').read())
+        file.add_header('Content-Disposition', 'attachment', filename=name)
+        encoders.encode_base64(file)
+        msg.attach(file)
+
+    print "beg..."
+    # 发送
+    smtp = smtplib.SMTP()
+    smtp.connect(email_host, 25)
+    print "connect done"
+    smtp.login(sender, password)
+    print "login done, sending..."
+    smtp.sendmail(sender, receiver, msg.as_string())
+    smtp.quit()
+    print('success')
+
+
 if __name__ == '__main__':
     now = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
     subject = now + 'test email'
-    img_path = "./screenshot_final/save.png"
-    send_mail(subject, img_path)
+    # img_path = "./screenshot_final/save.png"
+    # send_mail(subject, img_path)
+
+    html_path = "./static/20220227_fangshi.html"
+    send_html(subject, [html_path])
