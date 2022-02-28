@@ -499,7 +499,7 @@ def send_html(subject, html_paths, receiver):
 def send_htmls(html_paths, receiver):
     now = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
     subject = "房屋交易 - html - %s" % today_str()
-    send_html(subject, png_paths, receiver)
+    send_html(subject, html_paths, receiver)
 
 
 if __name__ == '__main__':
