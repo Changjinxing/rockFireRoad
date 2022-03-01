@@ -198,7 +198,7 @@ def download(url, h):
 
 
 def parse_num(r, xpath):
-    # print r.content
+    print r.content
     root = lxml.html.fromstring(r.content)
     nums = root.xpath(xpath)
     # print type(nums), len(nums)
@@ -277,6 +277,7 @@ def crawl_and_save():
         "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36"
     }
     r = download(zhujianwei, headers)
+    print r
     real_nums = parse_num(r, num_xpath)
     ans, real_keys = build_result(real_nums, keys)
     # save data local json file
