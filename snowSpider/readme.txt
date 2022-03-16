@@ -2,8 +2,10 @@ todo list
 
 1. save data to sql
     1. sql table definition
-    2. 住建委 id date source url status content gmt_create gmt_update creator operator
-    3. 网签数量 id date type[day/week/month] source url status online gmt_create gmt_update creator operator
+    2. tb_original_source: 住建委 id date source url status content gmt_create gmt_update creator operator
+    3. tb_sign_online: 网签数量 id date type[day/week/month/quarter/year] source url status online gmt_create gmt_update creator operator
+       1day 5条 + 52week + 12month + 1year + 4q = 434*5source*100year
+
 2. 数据生成图片 done
 3. 发送邮件 done
 4. 趋势曲线网页 done
