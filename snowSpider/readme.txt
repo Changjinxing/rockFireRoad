@@ -18,6 +18,7 @@ todo list
 10. 部署服务到云端 done  git速度问题 + 图片渲染问题
 11. 爬取稳定性 封禁问题
 
+12. data 转换为 request format
 
 
 
