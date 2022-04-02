@@ -225,6 +225,11 @@ def today_str():
     return "%d%02d%02d" % (year, mon, day)
 
 
+def today_info():
+    now, year, mon, day = get_today_info()
+    return year, mon, day, "%d%02d%02d" % (year, mon, day)
+
+
 def current_date():
     now, year, mon, day = get_today_info()
     end_day = now.replace(day=1)
@@ -293,6 +298,11 @@ def read_file(path):
     return f.read()
 
 
+def read_file_codecs(path):
+    import codecs
+    f = codecs.open(path, 'r+')
+    return f.read()
+
 html_file_path = "zhujianwei.html"
 format_html_str = read_file(html_file_path)
 
@@ -308,14 +318,14 @@ def format_and_save_html(nums, keys):
 def crop_img(img):
     # for img in os.listdir(img_path):
     if img.lower().endswith('.png'):
-        print('%s裁剪中。。'% img)
+        print('%s裁剪中。。' % img)
         # im = Image.open('./screen_shot/%s'% img)
         im = Image.open(img)
         x = 296
         y = 0
         w = 1960
         h = 1570
-        region = im.crop((x, y, x+w, y+h))
+        region = im.crop((x, y, x + w, y + h))
         final_path = "./screenshot_final/%s.png" % (today_str())
         region.save(final_path)
         return final_path
@@ -456,7 +466,7 @@ def get_wangqian_qushi_and_send():
     r = download(url, headers)
     # print r.text.encode('utf8','ignore')
     html_save_fp = "./static/%s_fangshi.html" % today_str()
-    save_file(html_save_fp, r.text.encode('utf8','ignore'))
+    save_file(html_save_fp, r.text.encode('utf8', 'ignore'))
 
     local_html_url = "file://%s/rockFireRoad/snowSpider/static/%s_fangshi.html" % (local_path_prefix, today_str())
 
@@ -503,7 +513,274 @@ def send_htmls(html_paths, receiver):
     send_html(subject, html_paths, receiver)
 
 
+request_sample = {
+    "source": "zjw",
+    "year": 2022,
+    "mon": 3,
+    "day": 8,
+    "month": {
+        "online": 9158,
+        "onlineArea": 788782.44,
+        "signArea": 739063.69,
+        "sign": 8260
+    },
+    "daily": {
+        "online": 692,
+        "onlineArea": 60159.68,
+        "signArea": 54855.99,
+        "sign": 616
+    },
+    "yearCanSell": {
+        "car": 1,
+        "business": 2,
+        "office": 3,
+        "area": 1.2,
+        "house": 1,
+        "num": 2,
+        "nArea": 3.2
+    },
+    "monthMaySellCert": {
+        "car": 1,
+        "business": 2,
+        "office": 3,
+        "area": 1.2,
+        "house": 1,
+        "num": 2,
+        "nArea": 3.2
+    },
+    "realEstateProject": {
+        "car": 1,
+        "business": 2,
+        "office": 3,
+        "area": 1.2,
+        "house": 1,
+        "num": 2,
+        "nArea": 3.2
+    },
+    "future": {
+        "sign": {
+            "car": 1,
+            "business": 2,
+            "office": 3,
+            "area": 1.2,
+            "house": 1,
+            "num": 2,
+            "nArea": 3.2
+        },
+        "buy": {
+            "car": 1,
+            "business": 2,
+            "office": 3,
+            "area": 1.2,
+            "house": 1,
+            "num": 2,
+            "nArea": 3.2
+        }
+    },
+    "secondHand": {
+        "sign": {
+            "car": 1,
+            "business": 2,
+            "office": 3,
+            "area": 1.2,
+            "house": 1,
+            "num": 2,
+            "nArea": 3.2
+        },
+        "noSign": {
+            "car": 1,
+            "business": 2,
+            "office": 3,
+            "area": 1.2,
+            "house": 1,
+            "num": 2,
+            "nArea": 3.2
+        },
+        "buy": {
+            "car": 1,
+            "business": 2,
+            "office": 3,
+            "area": 1.2,
+            "house": 1,
+            "num": 2,
+            "nArea": 3.2
+        }
+    }
+}
+
+
+def key_encode(key):
+    return key
+    # return key.decode('utf-8').encode('unicode-escape').replace("\\\\", "\\").decode("utf-8")
+
+
+def translate(type, data):
+    # print data
+    if type == 'saving':
+        return {
+            "online": data[key_encode(u'住宅签约套数')],
+            "onlineArea": data[key_encode(u'住宅签约面积(m2)')],
+            "signArea": data[key_encode(u'网上签约面积(m2)')],
+            "sign": data[key_encode(u'网上签约套数')]
+        }
+    if type in ['second_sign']:
+        return {
+            "car": data[key_encode(u'车位个数')],
+            "business": data[key_encode(u'商业单元')],
+            "office": data[key_encode(u'办公单元')],
+            "area": data[key_encode(u'面积(M2)')],
+            "num": data[key_encode(u'网上签约套数')],
+            "nArea": data[key_encode(u'网上签约面积(M2)')],
+            "house": data[key_encode(u'其中 住宅套数')]
+        }
+    if type in ['second_buy']:
+        return {
+            "car": data[key_encode(u'车位个数')],
+            "business": data[key_encode(u'商业单元')],
+            "office": data[key_encode(u'办公单元')],
+            "area": data[key_encode(u'面积(M2)')],
+            "num": data[key_encode(u'网上认购套数')],
+            "nArea": data[key_encode(u'网上认购面积(M2)')],
+            "house": data[key_encode(u'其中 住宅套数')]
+        }
+    if type in ['second_no_sign']:
+        return {
+            "car": data[key_encode(u'车位个数')],
+            "business": data[key_encode(u'商业单元')],
+            "office": data[key_encode(u'办公单元')],
+            "area": data[key_encode(u'面积(M2)')],
+            "num": data[key_encode(u'未签约套数')],
+            "nArea": data[key_encode(u'未签约面积(M2)')],
+            "house": data[key_encode(u'其中 住宅套数')]
+        }
+    if type in ['future_sign']:
+        return {
+            "car": data[key_encode(u'车位个数')],
+            "business": data[key_encode(u'商业单元')],
+            "office": data[key_encode(u'办公单元')],
+            "area": data[key_encode(u'面积(M2)')],
+            "num": data[key_encode(u'网上签约套数')],
+            "nArea": data[key_encode(u'网上签约面积 (M2)')],
+            "house": data[key_encode(u'其中 住宅套数')]
+        }
+    if type in ['future_buy']:
+        return {
+            "car": data[key_encode(u'车位个数')],
+            "business": data[key_encode(u'商业单元')],
+            "office": data[key_encode(u'办公单元')],
+            "area": data[key_encode(u'面积(M2)')],
+            "num": data[key_encode(u'网上认购套数')],
+            "nArea": data[key_encode(u'网上认购面积(M2)')],
+            "house": data[key_encode(u'其中 住宅套数')]
+        }
+    if type in ['year_can_sell']:
+        return {
+            "car": data[key_encode(u'车位个数')],
+            "business": data[key_encode(u'商业单元')],
+            "office": data[key_encode(u'办公单元')],
+            "area": data[key_encode(u'面积(M2)')],
+            "num": data[key_encode(u'可售房屋套数')],
+            "nArea": data[key_encode(u'可售房屋面积(M2)')],
+            "house": data[key_encode(u'其中 住宅套数')]
+        }
+    if type in ['month_may_sell_cert']:
+        return {
+            "car": data[key_encode(u'车位个数')],
+            "business": data[key_encode(u'商业单元')],
+            "office": data[key_encode(u'办公单元')],
+            "area": data[key_encode(u'面积(M2)')],
+            "num": data[key_encode(u'批准预售许可证')],
+            "nArea": data[key_encode(u'批准预售面积(M2)')],
+            "house": data[key_encode(u'其中 住宅套数')]
+        }
+    if type in ['real_estate_project']:
+        return {
+            "car": data[key_encode(u'车位个数')],
+            "business": data[key_encode(u'商业单元')],
+            "office": data[key_encode(u'办公单元')],
+            "area": data[key_encode(u'面积(M2)')],
+            "num": data[key_encode(u'现房项目个数')],
+            "nArea": data[key_encode(u'初始登记面积(M2)')],
+            "house": data[key_encode(u'其中 住宅套数')]
+        }
+
+
+# parse data to request
+def parse_data_2_request(daily_data_file_path, year, mon, day):
+    ans = request_sample
+    context = json.loads(read_file(daily_data_file_path))
+    # print key_encode('住宅签约套数')
+    # print context[8]
+    # print json.dumps(context)
+    # exit()
+    ans['year'] = year
+    ans['mon'] = mon
+    ans['day'] = day
+
+    ori_month = context[8].values()[0]
+    ori_daily = context[9].values()[0]
+    ans['daily'] = translate('saving', ori_daily)
+    ans['month'] = translate('saving', ori_month)
+
+
+    ori_second_sign = context[7].values()[0]
+    ori_second_nosign = context[4].values()[0]
+    ori_second_buy = context[6].values()[0]
+
+    secondHand = {
+        'sign': translate('second_sign', ori_second_sign),
+        'noSign': translate('second_no_sign', ori_second_nosign),
+        'buy': translate('second_buy', ori_second_buy)
+    }
+    ans['secondHand'] = secondHand
+
+    ori_future_sign = context[3].values()[0]
+    ori_future_buy = context[2].values()[0]
+    future = {
+        'sign': translate('future_sign', ori_future_sign),
+        'buy': translate('future_buy', ori_future_buy)
+    }
+    ans['future'] = future
+
+    ori_year_can_sell = context[0].values()[0]
+    year_can_sell = translate("year_can_sell", ori_year_can_sell)
+    ans['yearCanSell'] = year_can_sell
+
+    ori_month_may_sell_cert = context[1].values()[0]
+    month_may_sell_cert = translate('month_may_sell_cert', ori_month_may_sell_cert)
+    ans['monthMaySellCert'] = month_may_sell_cert
+
+    ori_real_estate_project = context[5].values()[0]
+    real_estate_project = translate('real_estate_project', ori_real_estate_project)
+    ans['realEstateProject'] = real_estate_project
+
+    return ans
+
+
+def usage_for_parse_data_to_request():
+
+    year, mon, day, day_str = today_info()
+
+    # daily_data_path = "./data/%s.json" % (day_str)
+    daily_data_path = "./data/%s.json" % ('20220316')
+    request_body = parse_data_2_request(daily_data_path, year, mon, day)
+    print json.dumps(request_body)
+
+    requests = []
+    mon = 3
+    for day in range(1, 32):
+        daily_data_path = "./data/%d%02d%02d.json" % (year, mon, day)
+        # print daily_data_path
+        # exit()
+        request = parse_data_2_request(daily_data_path, year, mon, day)
+        requests.append(request)
+    return requests
+
+
 if __name__ == '__main__':
+    # usage_for_parse_data_to_request()
+    # exit()
+
     nums, keys = crawl_and_save()
     html_path, zjw_html = format_and_save_html(nums, keys)
     png_file_path = save_and_crop_png(html_path)
