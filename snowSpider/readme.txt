@@ -18,7 +18,11 @@ todo list
 10. 部署服务到云端 done  git速度问题 + 图片渲染问题
 11. 爬取稳定性 封禁问题
 
-12. data 转换为 request format
+12. data 转换为 request format done
+13. deploy java service on cloud
+14. apply mysql instance on cloud
+15. call service from python side
+16. add antf2 service to sharing or other front end service
 
 
 
