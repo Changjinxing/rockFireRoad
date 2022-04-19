@@ -22,7 +22,8 @@ todo list
 13. deploy java service on cloud done
 14. apply mysql instance on cloud done
 15. call service from python side
-16. add antf2 service to sharing or other front end service
+16. add query api for java service/sharing to serve the front end
+17. add antf2 service to sharing or other front end service
 
 
 
