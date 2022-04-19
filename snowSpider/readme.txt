@@ -19,8 +19,8 @@ todo list
 11. 爬取稳定性 封禁问题
 
 12. data 转换为 request format done
-13. deploy java service on cloud
-14. apply mysql instance on cloud
+13. deploy java service on cloud done
+14. apply mysql instance on cloud done
 15. call service from python side
 16. add antf2 service to sharing or other front end service
 
